@@ -1,46 +1,28 @@
-if (IsBuildAlone.toBoolean()) {
-    apply plugin: 'com.android.application'
-} else {
-    apply plugin: 'com.android.library'
-}
+apply plugin: 'com.android.library'
 def config = rootProject.ext
-
 android {
     compileSdkVersion config.android.compileSdkVersion
     defaultConfig {
-        if (IsBuildAlone.toBoolean()) {
-            applicationId "com.my.mycomponent.user"
-        }
+
         javaCompileOptions {
             annotationProcessorOptions {
-                arguments = [moduleName: project.getName()]
+                arguments = [ moduleName : project.getName() ]
             }
         }
         minSdkVersion config.android.minSdkVersion
         targetSdkVersion config.android.targetSdkVersion
-        versionCode config.android.versionCode
-        versionName config.android.versionName
+        versionCode 1
+        versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
-
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    sourceSets {
-        main {
-            if (IsBuildAlone.toBoolean()) {
-                manifest.srcFile 'src/main/debug/AndroidManifest.xml'
-            } else {
-                manifest.srcFile 'src/main/release/AndroidManifest.xml'
-            }
-        }
-    }
 
-    //资源以此 prefix 开头
-    resourcePrefix 'fix_user_'
+
 }
 
 dependencies {
@@ -50,14 +32,8 @@ dependencies {
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-
-    testImplementation config.dependencies["junit"]
-    implementation (config.dependencies["support-v7"]){
-        exclude module: "support-v4"
-    }
-    implementation config.dependencies["design"]
-    implementation config.dependencies["constraint-layout"]
+    implementation config.dependencies["support-v7"]
     annotationProcessor config.dependencies["arouter-compiler"]
-    api project(':routerlibrary')
+    api config.dependencies["arouter-api"]
 
 }
